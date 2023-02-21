@@ -1,8 +1,19 @@
 const ROUTER_KEYS = {
   MAIN: '/',
-  USER_LOGIN: '/user/login',
+  MENU: '/menu?filter=',
   USER_REGISTER: '/user/register',
 };
+
+const NAV_KEYS = [
+  {
+    label: 'MENU',
+    key: 'pizzas',
+  },
+  {
+    label: "DEALS",
+    key: 'deals',
+  }
+];
 
 const TEAM_KEYS = [
   {
@@ -12,7 +23,7 @@ const TEAM_KEYS = [
   },
   {
     name: 'Ruslan Kotliarenko',
-    linkedIn: 'https://www.linkedin.com/in/ruslan-kotliarenko-3605b8252',
+    linkedIn: 'https://www.linkedin.com/in/ruslan-kotliarenko',
     gitHub: 'https://github.com/ruslankotliar',
   },
   {
@@ -27,4 +38,4 @@ const TEAM_KEYS = [
   },
 ];
 
-export { ROUTER_KEYS, TEAM_KEYS };
+export { ROUTER_KEYS, TEAM_KEYS, NAV_KEYS };

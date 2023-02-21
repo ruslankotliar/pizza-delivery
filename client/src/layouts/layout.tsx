@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Breadcrumb,
   Layout,
-  Menu,
   Typography,
   Col,
   Row,
@@ -14,7 +12,9 @@ import {
 } from 'antd';
 import { GiFullPizza } from 'react-icons/gi';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
-import { TEAM_KEYS } from '../consts';
+import { NAV_KEYS, ROUTER_KEYS, TEAM_KEYS } from '../consts';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { throttle } from '../utils';
 
 const { Header, Content, Footer } = Layout;
 
@@ -24,30 +24,48 @@ interface Props {
 
 export const LayoutComponent: React.FC<Props> = ({ children }) => {
   const { token } = theme.useToken();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [nav, setNav] = useState<string>('');
+
+  useEffect(() => {
+    if (pathname === '/') {
+      const handleScroll = (event: Event) => {
+        setScrolled(!!window.scrollY);
+      };
+
+      window.addEventListener('scroll', throttle(handleScroll, 300));
+
+      return () => {
+        window.removeEventListener('scroll', throttle(handleScroll, 300));
+      };
+    } else {
+      setScrolled(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Layout>
-      <Header
-        style={{
-          position: 'sticky',
-          display: 'flex',
-          justifyContent: 'space-between',
-          top: 0,
-          zIndex: 1,
-          width: '100%',
-          paddingInline: '100px',
-        }}
+      <header
+        className={`header ${scrolled ? 'nav-scrolled' : 'nav-not-scrolled'}`}
       >
         <div
+          className='logo'
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
+          onClick={() => {
+            setNav('');
+            navigate('/');
+          }}
         >
-          <GiFullPizza color={token.colorPrimary} fontSize='3em' />
+          <GiFullPizza color={'inherit'} fontSize='3em' />
           <Typography.Title
             style={{
-              color: token.colorPrimary,
+              color: 'inherit',
               padding: 0,
               margin: 0,
               marginLeft: token.marginMD,
@@ -56,32 +74,38 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
             Pizza Delivery
           </Typography.Title>
         </div>
-        <Menu
-          theme='dark'
-          mode='horizontal'
-          defaultSelectedKeys={['2']}
-          items={new Array(3).fill(null).map((_, index) => ({
-            key: String(index + 1),
-            label: `nav ${index + 1}`,
-          }))}
-        />
-      </Header>
-      <Content className='site-layout' style={{ padding: '0 50px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb>
-        <div
-          style={{
-            padding: 24,
-            minHeight: 380,
-            background: token.colorBgContainer,
-          }}
-        >
-          {children}
+        <div className='nav-button-container'>
+          {NAV_KEYS.map((item) => (
+            <button
+              className={
+                nav === item.key && !scrolled
+                  ? 'nav-button-active'
+                  : nav === item.key && scrolled
+                  ? 'nav-button-active-scrolled'
+                  : scrolled
+                  ? 'nav-button-scrolled'
+                  : 'nav-button'
+              }
+              onClick={() => {
+                setNav(item.key);
+                navigate(ROUTER_KEYS.MENU + item.key);
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+          <Button
+            type='primary'
+            style={{
+              color: token.colorPrimaryActive,
+              fontWeight: 600,
+            }}
+          >
+            ORDER NOW
+          </Button>
         </div>
-      </Content>
+      </header>
+      <Content className='site-layout'>{children}</Content>
       <FooterComponent />
     </Layout>
   );
@@ -109,7 +133,7 @@ const FooterComponent: React.FC = () => {
               />
             </Space>
             <Typography.Text>
-              © 823 Code & Coffee Team. All rights reserved
+              © Code & Coffee Team. All rights reserved
             </Typography.Text>
           </Space>
         </Col>
