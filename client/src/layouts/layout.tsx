@@ -13,10 +13,11 @@ import {
 import { GiFullPizza } from 'react-icons/gi';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { NAV_KEYS, ROUTER_KEYS, TEAM_KEYS } from '../consts';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { throttle } from '../utils';
+import { StringParam, useQueryParam } from 'use-query-params';
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 
 interface Props {
   children: React.ReactNode;
@@ -25,11 +26,11 @@ interface Props {
 export const LayoutComponent: React.FC<Props> = ({ children }) => {
   const { token } = theme.useToken();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState<boolean>(false);
-  const [nav, setNav] = useState<string>('');
+  const [filter] = useQueryParam('filter', StringParam);
 
   useEffect(() => {
+    console.log(filter);
     if (pathname === '/') {
       const handleScroll = (event: Event) => {
         setScrolled(!!window.scrollY);
@@ -58,11 +59,10 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
             justifyContent: 'center',
           }}
           onClick={() => {
-            setNav('');
-            navigate('/');
+            window.location.href = '/';
           }}
         >
-          <GiFullPizza color={'inherit'} fontSize='3em' />
+          <GiFullPizza color={token.colorPrimary} fontSize='3em' />
           <Typography.Title
             style={{
               color: 'inherit',
@@ -78,17 +78,16 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
           {NAV_KEYS.map((item) => (
             <button
               className={
-                nav === item.key && !scrolled
+                filter === item.key && !scrolled
                   ? 'nav-button-active'
-                  : nav === item.key && scrolled
+                  : filter === item.key && scrolled
                   ? 'nav-button-active-scrolled'
                   : scrolled
                   ? 'nav-button-scrolled'
                   : 'nav-button'
               }
               onClick={() => {
-                setNav(item.key);
-                navigate(ROUTER_KEYS.MENU + item.key);
+                window.location.href = ROUTER_KEYS.MENU + item.key;
               }}
             >
               {item.label}
