@@ -78,15 +78,14 @@ button {
 }
 
 /* main page slider */
-.swiper {
+#main-slider-container {
   width: 100vw !important;
   height: 100vh;
   margin: 0 !important;
   overflow: hidden;
-
 }
 
-.swiper-slide {
+.main-slider-slide {
   /* Center slide text vertically */
   display: flex;
   justify-content: center;
@@ -117,11 +116,14 @@ button {
 /* scroll arrow hint */
 #section04 {
   position: absolute;
-  bottom: 6em;
+  bottom: 3em;
   left: 0;
   right: 0;
   margin: auto;
   z-index: 100;
+  width: 100vw;
+  height: 4em;
+  cursor: pointer;
 }
 
 #section04 a {
@@ -173,7 +175,6 @@ button {
 }
 
 /* slider popup */
-
 .slider-popup-container::before,
 .slider-popup-container::after {
   content: '';
