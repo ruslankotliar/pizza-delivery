@@ -180,21 +180,40 @@ button {
   width: 100%;
   height: 75px;
   display: block;
-  background-size: contain;
+  box-sizing: border-box;
 }
 
 .slider-popup-container::before {
   background: url('https://www.dominos.at/images/box-top.png') no-repeat bottom left;
+  background-size: contain;
 }
 
 .slider-popup-container::after {
   background: url('https://www.dominos.at/images/box-bottom.png') no-repeat top left;
+  background-size: contain;
 }
 
 .slider-popup-container {
+  position: absolute;
+  max-width: 550px;
+  cursor: pointer;
+  left: 20%;
+  top: 20%;
+}
+
+.slider-popup {
   background: url('https://www.dominos.at/images/box-middle.png') repeat top left;
   padding: 20px 40px;
-  position: absolute;
-  left: 25%;
-  top: 25%;
+  background-size: contain;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.popup-decoration {
+  background-image: url('https://www.dominos.at/images/decor_elem_left_red.svg'), url('https://www.dominos.at/images/decor_elem_right_red.svg');
+  background-position: -0.5% center, 100% center;
+  background-size: 30px;
+  background-repeat: no-repeat;
+  padding-inline: 10em;
 }

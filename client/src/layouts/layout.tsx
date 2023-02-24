@@ -11,11 +11,11 @@ import {
   theme,
 } from 'antd';
 import { GiFullPizza } from 'react-icons/gi';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { NAV_KEYS, ROUTER_KEYS, TEAM_KEYS } from '../consts';
 import { useLocation } from 'react-router-dom';
 import { throttle } from '../utils';
 import { StringParam, useQueryParam } from 'use-query-params';
+import { GithubOutlined, LinkedinOutlined } from '@ant-design/icons';
 
 const { Content, Footer } = Layout;
 
@@ -113,7 +113,12 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
 const FooterComponent: React.FC = () => {
   const { token } = theme.useToken();
   return (
-    <Footer style={{ textAlign: 'center' }}>
+    <Footer
+      style={{
+        textAlign: 'center',
+        backgroundColor: token.colorPrimaryBgHover,
+      }}
+    >
       <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
         <Col span={8}>
           <Space size={'large'} align={'start'} direction={'vertical'}>
@@ -121,15 +126,24 @@ const FooterComponent: React.FC = () => {
               <Typography.Title style={{ margin: 0, padding: 0 }} level={2}>
                 Pizza Delivery
               </Typography.Title>
-              <Button
-                style={{
-                  padding: 0,
-                  margin: 0,
-                }}
-                shape='circle'
-                icon={<FaGithub size={'full'} />}
-                href={'https://github.com/ruslankotliar/pizza-delivery'}
-              />
+              <Tooltip title='GitHub'>
+                <Button
+                  style={{
+                    padding: 0,
+                    margin: 0,
+                  }}
+                  shape='circle'
+                  icon={
+                    <GithubOutlined
+                      style={{
+                        fontSize: '2em',
+                        backgroundColor: token.colorPrimaryBgHover,
+                      }}
+                    />
+                  }
+                  href={'https://github.com/ruslankotliar/pizza-delivery'}
+                />
+              </Tooltip>
             </Space>
             <Typography.Text>
               © Code & Coffee Team. All rights reserved
@@ -171,10 +185,11 @@ const FooterComponent: React.FC = () => {
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
+                            backgroundColor: token.colorPrimaryBgHover,
                           }}
                           size='small'
                           shape='circle'
-                          icon={<FaLinkedin />}
+                          icon={<LinkedinOutlined />}
                           href={member.linkedIn}
                         />
                       </Tooltip>
@@ -184,10 +199,11 @@ const FooterComponent: React.FC = () => {
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
+                            backgroundColor: token.colorPrimaryBgHover,
                           }}
                           size='small'
                           shape='circle'
-                          icon={<FaGithub />}
+                          icon={<GithubOutlined />}
                           href={member.gitHub}
                         />
                       </Tooltip>
