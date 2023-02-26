@@ -138,17 +138,21 @@ const MultipleSliderComponent = () => {
   const { token } = theme.useToken();
   return (
     <section
-      style={{ backgroundColor: token.colorPrimaryBg, padding: '5em 10em' }}
+      style={{
+        backgroundColor: token.colorPrimaryBg,
+        padding: '5em 7.5em',
+      }}
     >
       <Swiper
+        style={{ overflow: 'hidden', overflowY: 'visible', padding: '0 3em' }}
         slidesPerView={4}
         grabCursor={true}
-        spaceBetween={30}
+        spaceBetween={42}
         modules={[Navigation]}
         navigation={true}
       >
         {offers.map((offer) => (
-          <SwiperSlide key={offer.id}>
+          <SwiperSlide key={offer.id} id='multiple-slider'>
             <Space
               style={{
                 backgroundColor: token.colorPrimaryBgHover,

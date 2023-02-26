@@ -218,3 +218,10 @@ button {
   background-repeat: no-repeat;
   padding-inline: 10em;
 }
+
+/* multiple slider */
+#multiple-slider:hover {
+  overflow: visible;
+  transform: scale(1.05);
+  transition: all 0.3s ease-in-out;
+}
