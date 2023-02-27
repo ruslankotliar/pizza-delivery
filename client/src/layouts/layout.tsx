@@ -18,6 +18,9 @@ import { StringParam, useQueryParam } from 'use-query-params';
 import { GithubOutlined, LinkedinOutlined } from '@ant-design/icons';
 import { ModalLoginComponent } from '../components';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '../app/rootReducer';
+
 const { Content, Footer } = Layout;
 
 interface Props {
@@ -30,9 +33,9 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [filter] = useQueryParam('filter', StringParam);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const isLogged = useSelector((state: RootState) => state.auth.isLogged);
 
   useEffect(() => {
-    console.log(filter);
     if (pathname === '/') {
       const handleScroll = (event: Event) => {
         setScrolled(!!window.scrollY);
@@ -44,7 +47,7 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
         window.removeEventListener('scroll', throttle(handleScroll, 300));
       };
     } else {
-      setScrolled(false);
+      setScrolled(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

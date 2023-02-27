@@ -162,8 +162,12 @@ const MultipleSliderComponent = () => {
               align='center'
             >
               <Image src={offer.img} />
-              <Typography.Title level={5}>{offer.title}</Typography.Title>
-              <Typography.Paragraph>{offer.description}</Typography.Paragraph>
+              <Typography.Title style={{ paddingInline: '1em' }} level={5}>
+                {offer.title}
+              </Typography.Title>
+              <Typography.Paragraph style={{ paddingInline: '1em' }}>
+                {offer.description}
+              </Typography.Paragraph>
               <Button type='primary'>GET THIS DEAL!</Button>
             </Space>
           </SwiperSlide>

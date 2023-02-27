@@ -6,6 +6,11 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FacebookFilled, GoogleSquareFilled } from '@ant-design/icons';
 import { useGoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
+import { UserLoginData } from '../types/authTypes';
+
+import { useDispatch } from 'react-redux';
+import { login } from '../features/auth/authActions';
+import { AppDispatch } from '../app/store';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email address').required('Required'),
@@ -15,6 +20,7 @@ const LoginSchema = Yup.object().shape({
 export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   const { token } = theme.useToken();
   const [remember, setRemember] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleOk = () => {
     setIsModalOpen(false);
@@ -24,15 +30,17 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
     setIsModalOpen(false);
   };
 
+  const handleSubmit = (values: UserLoginData) => {
+    dispatch(login(values));
+  };
+
   const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
-    },
+    } as UserLoginData,
     validationSchema: LoginSchema,
-    onSubmit: (values) => {
-      console.log(values);
-    },
+    onSubmit: handleSubmit,
   });
 
   const handleRememberChange = (e: any) => {
@@ -46,12 +54,16 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
 
   // google login
   useGoogleOneTapLogin({
-    onSuccess: (tokenResponse) => console.log(tokenResponse),
+    onSuccess: (tokenResponse) => {
+      console.log(tokenResponse);
+    },
     onError: () => console.error('Login Error'),
   });
 
   const handleGoogleLogin = useGoogleLogin({
-    onSuccess: (tokenResponse) => console.log(tokenResponse),
+    onSuccess: (tokenResponse) => {
+      console.log(tokenResponse);
+    },
     onError: (errorResponse) => console.error(errorResponse),
   });
 

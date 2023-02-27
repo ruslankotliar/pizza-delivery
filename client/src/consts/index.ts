@@ -1,7 +1,7 @@
 const ROUTER_KEYS = {
   MAIN: '/',
   MENU: '/menu?filter=',
-  USER_REGISTER: '/user/register',
+  USER_REGISTER: '/register',
 };
 
 const NAV_KEYS = [
@@ -12,7 +12,7 @@ const NAV_KEYS = [
   {
     label: "DEALS",
     key: 'deals',
-  }
+  },
 ];
 
 const TEAM_KEYS = [
