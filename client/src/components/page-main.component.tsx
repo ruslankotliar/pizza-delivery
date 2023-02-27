@@ -140,11 +140,11 @@ const MultipleSliderComponent = () => {
     <section
       style={{
         backgroundColor: token.colorPrimaryBg,
-        padding: '5em 7.5em',
+        padding: '2em 7.5em',
       }}
     >
       <Swiper
-        style={{ overflow: 'hidden', overflowY: 'visible', padding: '0 3em' }}
+        style={{ overflow: 'hidden', overflowY: 'visible', padding: '3em' }}
         slidesPerView={4}
         grabCursor={true}
         spaceBetween={42}

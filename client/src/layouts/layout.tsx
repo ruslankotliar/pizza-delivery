@@ -16,6 +16,7 @@ import { useLocation } from 'react-router-dom';
 import { throttle } from '../utils';
 import { StringParam, useQueryParam } from 'use-query-params';
 import { GithubOutlined, LinkedinOutlined } from '@ant-design/icons';
+import { ModalLoginComponent } from '../components';
 
 const { Content, Footer } = Layout;
 
@@ -28,6 +29,7 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [filter] = useQueryParam('filter', StringParam);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     console.log(filter);
@@ -48,6 +50,10 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
   }, []);
   return (
     <Layout>
+      <ModalLoginComponent
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
       <header
         className={`header ${scrolled ? 'nav-scrolled' : 'nav-not-scrolled'}`}
       >
@@ -95,6 +101,7 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
           ))}
           <Button
             type='primary'
+            onClick={() => setIsModalOpen(true)}
             style={{
               color: token.colorPrimaryActive,
               fontWeight: 600,

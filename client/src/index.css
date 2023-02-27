@@ -225,3 +225,27 @@ button {
   transform: scale(1.05);
   transition: all 0.3s ease-in-out;
 }
+
+/* modal login */
+.login-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-button.login-button-facebook {
+  background-color: #0d6490;
+}
+
+.login-button.login-button-google {
+  background-color: #000;
+}
+
+.login-button.login-button-facebook:hover {
+  background-color: #357ca0;
+}
+
+.login-button.login-button-google:hover {
+  background-color: #2a2626;
+}
