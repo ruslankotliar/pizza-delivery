@@ -9,9 +9,10 @@ import {
   Button,
   Tooltip,
   theme,
+  Divider,
 } from 'antd';
 import { GiFullPizza } from 'react-icons/gi';
-import { NAV_KEYS, ROUTER_KEYS, TEAM_KEYS } from '../consts';
+import { ABOUT_ME, NAV_KEYS, ROUTER_KEYS } from '../consts';
 import { useLocation } from 'react-router-dom';
 import { throttle } from '../utils';
 import { StringParam, useQueryParam } from 'use-query-params';
@@ -129,8 +130,11 @@ const FooterComponent: React.FC = () => {
         backgroundColor: token.colorPrimaryBgHover,
       }}
     >
-      <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-        <Col span={8}>
+      <Row
+        style={{ justifyContent: 'center' }}
+        gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+      >
+        <Col span={12}>
           <Space size={'large'} align={'start'} direction={'vertical'}>
             <Space align='end'>
               <Typography.Title style={{ margin: 0, padding: 0 }} level={2}>
@@ -155,22 +159,15 @@ const FooterComponent: React.FC = () => {
                 />
               </Tooltip>
             </Space>
-            <Typography.Text>
-              © Code & Coffee Team. All rights reserved
-            </Typography.Text>
-          </Space>
-        </Col>
-        <Col span={8}>
-          <Space size={'large'} align={'start'} direction={'vertical'}>
-            <Typography.Title style={{ margin: 0, padding: 0 }} level={5}>
-              Our Team
-            </Typography.Title>
-            <Space size={'middle'} direction='vertical'>
-              {TEAM_KEYS.map((member) => (
+            <Space size={'large'} align={'start'} direction={'vertical'}>
+              <Typography.Title style={{ margin: 0, padding: 0 }} level={5}>
+                About me
+              </Typography.Title>
+              <Space size={'middle'} direction='vertical'>
                 <Row
                   justify={'space-between'}
                   gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-                  key={member.name}
+                  key={ABOUT_ME.name}
                   style={{
                     borderBottom: '0.5px solid black',
                     paddingBottom: token.paddingXXS,
@@ -185,7 +182,7 @@ const FooterComponent: React.FC = () => {
                       padding: 0,
                     }}
                   >
-                    <Typography.Text>{member.name}</Typography.Text>
+                    <Typography.Text>{ABOUT_ME.name}</Typography.Text>
                   </Col>
                   <Col>
                     <Space>
@@ -200,7 +197,7 @@ const FooterComponent: React.FC = () => {
                           size='small'
                           shape='circle'
                           icon={<LinkedinOutlined />}
-                          href={member.linkedIn}
+                          href={ABOUT_ME.linkedIn}
                         />
                       </Tooltip>
                       <Tooltip title='GitHub'>
@@ -214,17 +211,17 @@ const FooterComponent: React.FC = () => {
                           size='small'
                           shape='circle'
                           icon={<GithubOutlined />}
-                          href={member.gitHub}
+                          href={ABOUT_ME.gitHub}
                         />
                       </Tooltip>
                     </Space>
                   </Col>
                 </Row>
-              ))}
+              </Space>
             </Space>
           </Space>
         </Col>
-        <Col span={8}>
+        <Col span={12}>
           <Space size={'large'} align={'start'} direction={'vertical'}>
             <Typography.Title style={{ margin: 0, padding: 0 }} level={5}>
               Fu*k russia

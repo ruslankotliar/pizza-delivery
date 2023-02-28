@@ -10,32 +10,16 @@ const NAV_KEYS = [
     key: 'pizzas',
   },
   {
-    label: "DEALS",
+    label: 'DEALS',
     key: 'deals',
   },
 ];
 
-const TEAM_KEYS = [
-  {
-    name: 'Andrii Smidonov',
-    linkedIn: 'https://www.linkedin.com/in/andrii-smidonov',
-    gitHub: 'https://github.com/yukihirosm',
-  },
-  {
-    name: 'Ruslan Kotliarenko',
-    linkedIn: 'https://www.linkedin.com/in/ruslan-kotliarenko',
-    gitHub: 'https://github.com/ruslankotliar',
-  },
-  {
-    name: 'Dmytro Omelian',
-    linkedIn: 'https://www.linkedin.com/in/dichik',
-    gitHub: 'https://github.com/Dichik',
-  },
-  {
-    name: 'Sofiia Shaposhnikova',
-    linkedIn: 'https://www.linkedin.com/in/sofiia-shaposhnikova-9854931b7',
-    gitHub: 'https://github.com/Teasotea',
-  },
-];
+const ABOUT_ME = {
+  name: 'Ruslan Kotliarenko',
+  linkedIn: 'https://www.linkedin.com/in/ruslan-kotliarenko',
+  gitHub: 'https://github.com/ruslankotliar',
+};
 
-export { ROUTER_KEYS, TEAM_KEYS, NAV_KEYS };
+
+export { ROUTER_KEYS, ABOUT_ME, NAV_KEYS };

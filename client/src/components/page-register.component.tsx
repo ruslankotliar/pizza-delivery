@@ -53,6 +53,7 @@ export const RegistrationPageComponent = () => {
         justifyContent: 'center',
         padding: '10em',
         paddingBottom: '5em',
+        minHeight: '40em',
       }}
     >
       <Formik
@@ -153,7 +154,9 @@ export const RegistrationPageComponent = () => {
                       {({ field }: any) => (
                         <div>
                           <Input {...field} placeholder='First Name' />
-                          <ErrorMessage name='firstName' component='div' />
+                          <div style={{ color: 'red' }}>
+                            <ErrorMessage name='firstName' component='div' />
+                          </div>
                         </div>
                       )}
                     </Field>
@@ -163,7 +166,9 @@ export const RegistrationPageComponent = () => {
                       {({ field }: any) => (
                         <div>
                           <Input {...field} placeholder='Last Name' />
-                          <ErrorMessage name='lastName' component='div' />
+                          <div style={{ color: 'red' }}>
+                            <ErrorMessage name='lastName' component='div' />
+                          </div>
                         </div>
                       )}
                     </Field>
@@ -173,7 +178,9 @@ export const RegistrationPageComponent = () => {
                       {({ field }: any) => (
                         <div>
                           <Input {...field} placeholder='Email' />
-                          <ErrorMessage name='email' component='div' />
+                          <div style={{ color: 'red' }}>
+                            <ErrorMessage name='email' component='div' />
+                          </div>
                         </div>
                       )}
                     </Field>
@@ -183,7 +190,9 @@ export const RegistrationPageComponent = () => {
                       {({ field }: any) => (
                         <div>
                           <Input.Password {...field} placeholder='Password' />
-                          <ErrorMessage name='password' component='div' />
+                          <div style={{ color: 'red' }}>
+                            <ErrorMessage name='password' component='div' />
+                          </div>
                         </div>
                       )}
                     </Field>
@@ -196,10 +205,12 @@ export const RegistrationPageComponent = () => {
                             {...field}
                             placeholder='Confirm Password'
                           />
-                          <ErrorMessage
-                            name='confirmPassword'
-                            component='div'
-                          />
+                          <div style={{ color: 'red' }}>
+                            <ErrorMessage
+                              name='confirmPassword'
+                              component='div'
+                            />
+                          </div>
                         </div>
                       )}
                     </Field>
