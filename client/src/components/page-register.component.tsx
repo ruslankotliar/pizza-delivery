@@ -40,9 +40,8 @@ export const RegistrationPageComponent = () => {
     setAvatar(info.file);
   };
 
-  const handleSubmit = (values: UserRegistrationData) => {
+  const handleSubmit = async (values: UserRegistrationData) => {
     dispatch(register({ ...values, avatar: avatar }));
-    console.log({ ...values, avatar: avatar });
   };
 
   return (

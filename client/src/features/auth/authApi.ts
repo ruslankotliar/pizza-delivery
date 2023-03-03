@@ -6,6 +6,7 @@ import {
 } from './authTypes';
 import { gql } from '@apollo/client';
 import client from '../../api/graphql';
+import axios from 'axios';
 
 export const authApi: AuthApi = {
   async login(data: UserLoginData): Promise<LoginResponseData> {
@@ -13,7 +14,7 @@ export const authApi: AuthApi = {
       query: gql`
         mutation Login($email: String!, $password: String!) {
           login(email: $email, password: $password) {
-            token
+            user
           }
         }
       `,
@@ -29,36 +30,43 @@ export const authApi: AuthApi = {
   async register(
     data: UserRegistrationData
   ): Promise<RegistrationResponseData> {
-    const formData = new FormData();
-    formData.append('firstName', data.firstName);
-    formData.append('lastName', data.lastName);
-    formData.append('email', data.email);
-    formData.append('password', data.password);
-    formData.append('confirmPassword', data.confirmPassword);
-    if (data.avatar) {
-      formData.append('avatar', data.avatar);
-    }
-
-    const response = await client.mutate({
-      mutation: gql`
-        mutation Register($input: RegisterInput!) {
-          register(input: $input) {
-            token
+    try {
+      const response = await client.mutate({
+        mutation: gql`
+          mutation Register($input: RegisterInput!) {
+            register(input: $input) {
+              id
+              firstName
+              lastName
+              email
+              avatar
+            }
           }
-        }
-      `,
-      variables: {
-        input: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          password: data.password,
-          confirmPassword: data.confirmPassword,
-          avatar: data.avatar ? data.avatar.name : undefined,
+        `,
+        variables: {
+          input: {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            password: data.password,
+            confirmPassword: data.confirmPassword,
+            avatar: !!data.avatar,
+          },
         },
-      },
-    });
+      });
 
-    return response.data.register;
+      console.log(data.avatar);
+
+      await axios.put(response.data.register.avatar, data.avatar, {
+        headers: {
+          'Content-Type': 'image/jpeg',
+        },
+      });
+
+      return response.data.register;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   },
 };

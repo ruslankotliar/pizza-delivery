@@ -1,88 +1,61 @@
-// **** Variables **** //
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { Document, Schema, model } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-const INVALID_CONSTRUCTOR_PARAM = 'nameOrObj arg must a string or an object ' + 
-  'with the appropriate user keys.';
-
-export enum UserRoles {
-  Standard,
-  Admin,
-}
-
-
-// **** Types **** //
-
-export interface IUser {
-  id: number;
-  name: string;
+export interface UserDocument extends Document {
+  firstName: string;
+  lastName: string;
   email: string;
-  pwdHash?: string;
-  role?: UserRoles;
+  password: string;
+  avatar?: string;
+  comparePassword: (password: string) => Promise<boolean>;
 }
 
-export interface ISessionUser {
-  id: number;
-  email: string;
-  name: string;
-  role: IUser['role'];
-}
+const userSchema = new Schema<UserDocument>(
+  {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+    avatar: {
+      type: String,
+      default: null,
+    },
+  },
+  { timestamps: true }
+);
 
-
-// **** User **** //
-
-class User implements IUser {
-
-  public id: number;
-  public name: string;
-  public email: string;
-  public role?: UserRoles;
-  public pwdHash?: string;
-
-  /**
-   * Constructor()
-   */
-  public constructor(
-    name?: string,
-    email?: string,
-    role?: UserRoles,
-    pwdHash?: string,
-    id?: number, // id last cause usually set by db
-  ) {
-    this.name = (name ?? '');
-    this.email = (email ?? '');
-    this.role = (role ?? UserRoles.Standard);
-    this.pwdHash = (pwdHash ?? '');
-    this.id = (id ?? -1);
+userSchema.pre<UserDocument>('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
   }
 
-  /**
-   * Get user instance from object.
-   */
-  public static from(param: object): User {
-    // Check is user
-    if (!User.isUser(param)) {
-      throw new Error(INVALID_CONSTRUCTOR_PARAM);
-    }
-    // Get user instance
-    const p = param as IUser;
-    return new User(p.name, p.email, p.role, p.pwdHash, p.id);
-  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 
-  /**
-   * Is this an object which contains all the user keys.
-   */
-  public static isUser(this: void, arg: unknown): boolean {
-    return (
-      !!arg &&
-      typeof arg === 'object' &&
-      'id' in arg &&
-      'email' in arg &&
-      'name' in arg &&
-      'role' in arg
-    );
-  }
-}
+  next();
+});
 
+userSchema.methods.comparePassword = async function (
+  password: string
+): Promise<boolean> {
+  return await bcrypt.compare(password, this.password as string);
+};
 
-// **** Export default **** //
-
-export default User;
+export const User = model<UserDocument>('User', userSchema);
