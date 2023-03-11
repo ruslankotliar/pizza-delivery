@@ -78,15 +78,14 @@ button {
 }
 
 /* main page slider */
-.swiper {
+#main-slider-container {
   width: 100vw !important;
   height: 100vh;
   margin: 0 !important;
   overflow: hidden;
-
 }
 
-.swiper-slide {
+.main-slider-slide {
   /* Center slide text vertically */
   display: flex;
   justify-content: center;
@@ -117,11 +116,14 @@ button {
 /* scroll arrow hint */
 #section04 {
   position: absolute;
-  bottom: 6em;
+  bottom: 3em;
   left: 0;
   right: 0;
   margin: auto;
   z-index: 100;
+  width: 100vw;
+  height: 4em;
+  cursor: pointer;
 }
 
 #section04 a {
@@ -173,28 +175,77 @@ button {
 }
 
 /* slider popup */
-
 .slider-popup-container::before,
 .slider-popup-container::after {
   content: '';
   width: 100%;
   height: 75px;
   display: block;
-  background-size: contain;
+  box-sizing: border-box;
 }
 
 .slider-popup-container::before {
   background: url('https://www.dominos.at/images/box-top.png') no-repeat bottom left;
+  background-size: contain;
 }
 
 .slider-popup-container::after {
   background: url('https://www.dominos.at/images/box-bottom.png') no-repeat top left;
+  background-size: contain;
 }
 
 .slider-popup-container {
+  position: absolute;
+  max-width: 550px;
+  cursor: pointer;
+  left: 20%;
+  top: 20%;
+}
+
+.slider-popup {
   background: url('https://www.dominos.at/images/box-middle.png') repeat top left;
   padding: 20px 40px;
-  position: absolute;
-  left: 25%;
-  top: 25%;
+  background-size: contain;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.popup-decoration {
+  background-image: url('https://www.dominos.at/images/decor_elem_left_red.svg'), url('https://www.dominos.at/images/decor_elem_right_red.svg');
+  background-position: -0.5% center, 100% center;
+  background-size: 30px;
+  background-repeat: no-repeat;
+  padding-inline: 10em;
+}
+
+/* multiple slider */
+#multiple-slider:hover {
+  overflow: visible;
+  transform: scale(1.05);
+  transition: all 0.3s ease-in-out;
+}
+
+/* modal login */
+.login-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-button.login-button-facebook {
+  background-color: #0d6490;
+}
+
+.login-button.login-button-google {
+  background-color: #000;
+}
+
+.login-button.login-button-facebook:hover {
+  background-color: #357ca0;
+}
+
+.login-button.login-button-google:hover {
+  background-color: #2a2626;
 }
