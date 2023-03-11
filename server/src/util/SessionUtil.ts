@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Request, Response } from 'express';
 
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { RouteError } from '@src/other/classes';
+import HttpStatusCodes from '../constants/HttpStatusCodes';
+import { RouteError } from '../other/classes';
 import jsonwebtoken from 'jsonwebtoken';
 
 import EnvVars from '../constants/EnvVars';
-
 
 // **** Variables **** //
 
@@ -20,7 +21,6 @@ const Options = {
   expiresIn: EnvVars.Jwt.Exp,
 };
 
-
 // **** Functions **** //
 
 /**
@@ -28,16 +28,16 @@ const Options = {
  */
 function getSessionData<T>(req: Request): Promise<string | T | undefined> {
   const { Key } = EnvVars.CookieProps,
-    jwt = req.signedCookies[Key];
+    jwt = req.signedCookies[Key] as string;
   return _decode(jwt);
 }
 
 /**
- * Add a JWT to the response 
+ * Add a JWT to the response
  */
 async function addSessionData(
   res: Response,
-  data: string | object,
+  data: string | object
 ): Promise<Response> {
   if (!res || !data) {
     throw new RouteError(HttpStatusCodes.BAD_REQUEST, Errors.ParamFalsey);
@@ -56,7 +56,6 @@ function clearCookie(res: Response): Response {
   const { Key, Options } = EnvVars.CookieProps;
   return res.clearCookie(Key, Options);
 }
-
 
 // **** Helper Functions **** //
 
@@ -81,7 +80,6 @@ function _decode<T>(jwt: string): Promise<string | undefined | T> {
     });
   });
 }
-
 
 // **** Export default **** //
 

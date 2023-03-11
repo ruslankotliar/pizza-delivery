@@ -25,9 +25,9 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  context: ({ req }) => {
+  context: ({ req, res }) => {
     const session = req.session as Session;
-    return session.userId;
+    return { req, res, userId: session.userId };
   },
 });
 

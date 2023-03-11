@@ -58,4 +58,4 @@ userSchema.methods.comparePassword = async function (
   return await bcrypt.compare(password, this.password as string);
 };
 
-export const User = model<UserDocument>('User', userSchema);
+export const UserModel = model<UserDocument>('User', userSchema);

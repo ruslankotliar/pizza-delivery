@@ -1,45 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { User } from '../../models/User';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { UserModel } from '../../models/User';
 import { AuthenticationError } from 'apollo-server-express';
-import AWS from '../../aws/awsConfig';
-import { v4 as uuidv4 } from 'uuid';
 
-interface MyContext {
-  req: Request;
-  res: Response;
-  userId: string;
-}
+import { User } from '../../types/user';
+import { uploadUserAvatar } from '../../util/userAvatar';
+import {
+  Resolvers,
+  RegisterArgs,
+  MyRequest,
+  MyContext,
+} from '../../types/resolvers';
 
-type RegisterArgs = {
-  input: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    avatar: string;
-  };
-};
+const signIn = (user: User, req: MyRequest) => {
+  req.session.userId = user._id;
 
-type UserResponse = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  avatar: string | undefined;
-};
-
-type Resolvers = {
-  Query: {
-    me: (_: any, __: any, context: any) => Promise<UserResponse>;
-  };
-  Mutation: {
-    register: (_: any, args: RegisterArgs) => Promise<UserResponse>;
-    login: (
-      _: any,
-      args: { email: string; password: string },
-      context: any
-    ) => Promise<UserResponse>;
+  return {
+    id: user._id as string,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    avatar: user.avatar,
   };
 };
 
@@ -50,7 +31,7 @@ export const resolvers: Resolvers = {
         throw new AuthenticationError('Unauthorized');
       }
 
-      const user = await User.findById(userId);
+      const user = await UserModel.findById(userId);
 
       if (!user) {
         throw new AuthenticationError('User not found');
@@ -66,33 +47,26 @@ export const resolvers: Resolvers = {
     },
   },
   Mutation: {
-    register: async (_, { input }: RegisterArgs) => {
+    register: async (_, { input }: RegisterArgs, { req }) => {
+      if (!req) {
+        throw new Error('No request object found');
+      }
       const { firstName, lastName, email, password, confirmPassword, avatar } =
         input;
       if (password !== confirmPassword) {
         throw new Error('Passwords do not match');
       }
 
-      const existingUser = await User.findOne({ email });
+      const existingUser = await UserModel.findOne({ email });
 
       if (existingUser) {
         throw new Error('Email already registered');
       }
 
-      const user = new User({ firstName, lastName, email, password });
+      const user = new UserModel({ firstName, lastName, email, password });
 
       if (avatar) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
-        const avatarKey = `avatars/${uuidv4()}.jpeg`; // Unique key for the avatar file
-        const signedUrl = await new AWS.S3().getSignedUrlPromise('putObject', {
-          Bucket: 'pizza-delivery-5834925638',
-          Key: avatarKey,
-          ContentType: 'image/jpeg', // Or the appropriate MIME type for your image
-          ACL: 'public-read', // Allows public access to the uploaded file
-          Expires: 300, // URL expires after 5 minutes (adjust as needed)
-        });
-
-        user.avatar = signedUrl;
+        user.avatar = await uploadUserAvatar();
       } else {
         // generate random avatar here
         user.avatar = 'fasdfasd';
@@ -100,19 +74,13 @@ export const resolvers: Resolvers = {
 
       await user.save();
 
-      return {
-        id: user._id as string,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        avatar: user.avatar,
-      };
+      return signIn(user, req as MyRequest);
     },
 
     login: async (_, args, { req }) => {
       const { email, password } = args;
 
-      const user = await User.findOne({ email });
+      const user = await UserModel.findOne({ email });
 
       if (!user) {
         throw new Error('Invalid email or password');
@@ -124,18 +92,7 @@ export const resolvers: Resolvers = {
         throw new Error('Invalid email or password');
       }
 
-      // Here you can generate a JWT token and set it as a cookie in the response.
-      // You can also set the user ID in the context for authentication and authorization.
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-      req.session.userId = user.id;
-
-      return {
-        id: user._id as string,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        avatar: user.avatar,
-      };
+      return signIn(user, req as MyRequest);
     },
   },
 };

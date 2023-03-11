@@ -55,8 +55,6 @@ export const authApi: AuthApi = {
         },
       });
 
-      console.log(data.avatar);
-
       await axios.put(response.data.register.avatar, data.avatar, {
         headers: {
           'Content-Type': 'image/jpeg',
