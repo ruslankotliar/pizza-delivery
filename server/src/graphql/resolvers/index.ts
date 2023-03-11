@@ -17,9 +17,6 @@ const signIn = (user: User, req: MyRequest) => {
 
   return {
     id: user._id as string,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
     avatar: user.avatar,
   };
 };
@@ -48,9 +45,6 @@ export const resolvers: Resolvers = {
   },
   Mutation: {
     register: async (_, { input }: RegisterArgs, { req }) => {
-      if (!req) {
-        throw new Error('No request object found');
-      }
       const { firstName, lastName, email, password, confirmPassword, avatar } =
         input;
       if (password !== confirmPassword) {

@@ -1,11 +1,13 @@
 import { UserLoginData, UserRegistrationData } from '../../types/authTypes';
 
 export interface LoginResponseData {
-  token: string;
+  id: string;
+  avatar: string;
 }
 
 export interface RegistrationResponseData {
-  token: string;
+  id: string;
+  avatar: string;
 }
 
 export interface AuthApi {

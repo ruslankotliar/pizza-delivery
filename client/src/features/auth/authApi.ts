@@ -36,9 +36,6 @@ export const authApi: AuthApi = {
           mutation Register($input: RegisterInput!) {
             register(input: $input) {
               id
-              firstName
-              lastName
-              email
               avatar
             }
           }

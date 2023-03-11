@@ -9,7 +9,7 @@ export interface UserDocument extends Document {
   lastName: string;
   email: string;
   password: string;
-  avatar?: string;
+  avatar: string;
   comparePassword: (password: string) => Promise<boolean>;
 }
 
@@ -35,7 +35,7 @@ const userSchema = new Schema<UserDocument>(
     },
     avatar: {
       type: String,
-      default: null,
+      required: true,
     },
   },
   { timestamps: true }
