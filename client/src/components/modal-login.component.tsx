@@ -30,8 +30,11 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
     setIsModalOpen(false);
   };
 
-  const handleSubmit = (values: UserLoginData) => {
+  const handleSubmit = async (values: UserLoginData) => {
     dispatch(login(values));
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 250);
   };
 
   const formik = useFormik({

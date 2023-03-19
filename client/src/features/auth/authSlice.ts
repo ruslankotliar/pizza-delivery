@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { getCookie } from '../../utils';
 
 interface AuthState {
   isLoading: boolean;
@@ -8,7 +9,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   isLoading: false,
-  isLogged: Boolean(localStorage.getItem('token')),
+  isLogged: Boolean(getCookie('pizza-delivery-user-jwt')),
   error: null,
 };
 

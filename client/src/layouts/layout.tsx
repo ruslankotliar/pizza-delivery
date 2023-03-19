@@ -9,7 +9,6 @@ import {
   Button,
   Tooltip,
   theme,
-  Divider,
 } from 'antd';
 import { GiFullPizza } from 'react-icons/gi';
 import { ABOUT_ME, NAV_KEYS, ROUTER_KEYS } from '../consts';

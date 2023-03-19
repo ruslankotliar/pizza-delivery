@@ -10,14 +10,16 @@ import {
   RegisterArgs,
   MyRequest,
   MyContext,
+  LoginArgs,
 } from '../../types/resolvers';
+
+import logger from 'jet-logger';
 
 const signIn = (user: User, req: MyRequest) => {
   req.session.userId = user._id;
 
   return {
-    id: user._id as string,
-    avatar: user.avatar,
+    id: user._id,
   };
 };
 
@@ -71,10 +73,12 @@ export const resolvers: Resolvers = {
       return signIn(user, req as MyRequest);
     },
 
-    login: async (_, args, { req }) => {
-      const { email, password } = args;
+    login: async (_, { input }: LoginArgs, { req }) => {
+      const { email, password } = input;
 
       const user = await UserModel.findOne({ email });
+
+      logger.info(user);
 
       if (!user) {
         throw new Error('Invalid email or password');

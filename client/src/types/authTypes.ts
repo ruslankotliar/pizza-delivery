@@ -11,3 +11,18 @@ export interface UserLoginData {
   email: string;
   password: string;
 }
+
+export interface LoginResponseData {
+  id: string;
+  avatar: string;
+}
+
+export interface RegistrationResponseData {
+  id: string;
+  avatar: string;
+}
+
+export interface AuthApi {
+  login: (data: UserLoginData) => Promise<LoginResponseData>;
+  register: (data: UserRegistrationData) => Promise<RegistrationResponseData>;
+}

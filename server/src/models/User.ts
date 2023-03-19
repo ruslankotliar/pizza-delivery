@@ -31,7 +31,7 @@ const userSchema = new Schema<UserDocument>(
     password: {
       type: String,
       required: true,
-      select: false,
+      // select: false,
     },
     avatar: {
       type: String,

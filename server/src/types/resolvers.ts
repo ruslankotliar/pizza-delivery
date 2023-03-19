@@ -20,9 +20,15 @@ type RegisterArgs = {
   };
 };
 
+type LoginArgs = {
+  input: {
+    email: string;
+    password: string;
+  };
+};
+
 type UserResponse = {
   id: string;
-  avatar: string;
 };
 
 type Resolvers = {
@@ -36,11 +42,18 @@ type Resolvers = {
       context: any
     ) => Promise<UserResponse>;
     login: (
-      _: any,
-      args: { email: string; password: string },
+      _: MyRequest,
+      args: LoginArgs,
       context: any
     ) => Promise<UserResponse>;
   };
 };
 
-export type { Resolvers, MyRequest, MyContext, RegisterArgs, UserResponse };
+export type {
+  Resolvers,
+  MyRequest,
+  MyContext,
+  RegisterArgs,
+  UserResponse,
+  LoginArgs,
+};
