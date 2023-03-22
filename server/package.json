@@ -40,6 +40,7 @@
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
     "express-session": "^1.17.3",
+    "google-auth-library": "^8.7.0",
     "graphql": "^16.2.0",
     "helmet": "^6.0.1",
     "inserturlparams": "^1.0.1",

@@ -2607,6 +2607,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/facebook-js-sdk@^3.3.6":
+  version "3.3.6"
+  resolved "https://registry.yarnpkg.com/@types/facebook-js-sdk/-/facebook-js-sdk-3.3.6.tgz#a07bc686304c34953931546a207df455777d9ccf"
+  integrity sha512-CxTLMVtZsgrj9Ven5Pn1vcFumCFs+CG8Jfc63xWq/8b9e6uWjGyZlMnvQk7lIVn97Zd1vpu0ZK/OFWAoap0RCw==
+
 "@types/graceful-fs@^4.1.2":
   version "4.1.6"
   resolved "https://registry.yarnpkg.com/@types/graceful-fs/-/graceful-fs-4.1.6.tgz#e14b2576a1c25026b7f02ede1de3b84c3a1efeae"

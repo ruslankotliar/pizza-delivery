@@ -28,4 +28,7 @@ export default {
     Secret: process.env.AWS_SECRET_KEY ?? '',
     Region: process.env.AWS_REGION ?? '',
   },
+  Google: {
+    ClientID: process.env.GOOGLE_CLIENT_ID ?? '',
+  },
 } as const;

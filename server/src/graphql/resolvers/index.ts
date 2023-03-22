@@ -1,26 +1,36 @@
+/* eslint-disable indent */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { UserModel } from '../../models/User';
 import { AuthenticationError } from 'apollo-server-express';
 
+import EnvVars from '../../constants/EnvVars';
+
 import { User } from '../../types/user';
-import { uploadUserAvatar } from '../../util/userAvatar';
+import { uploadUserAvatar } from '../../util';
 import {
   Resolvers,
   RegisterArgs,
   MyRequest,
   MyContext,
   LoginArgs,
+  RegisterResponse,
+  LoginResponse,
+  GoogleLoginArgs,
 } from '../../types/resolvers';
+import { OAuth2Client } from 'google-auth-library';
 
-import logger from 'jet-logger';
-
-const signIn = (user: User, req: MyRequest) => {
+const signIn = (user: User, req: MyRequest, register: boolean) => {
   req.session.userId = user._id;
 
-  return {
-    id: user._id,
-  };
+  return register
+    ? {
+        id: user._id,
+        avatar: user.avatar,
+      }
+    : {
+        id: user._id,
+      };
 };
 
 export const resolvers: Resolvers = {
@@ -70,15 +80,13 @@ export const resolvers: Resolvers = {
 
       await user.save();
 
-      return signIn(user, req as MyRequest);
+      return signIn(user, req as MyRequest, true) as RegisterResponse;
     },
 
     login: async (_, { input }: LoginArgs, { req }) => {
       const { email, password } = input;
 
       const user = await UserModel.findOne({ email });
-
-      logger.info(user);
 
       if (!user) {
         throw new Error('Invalid email or password');
@@ -90,7 +98,31 @@ export const resolvers: Resolvers = {
         throw new Error('Invalid email or password');
       }
 
-      return signIn(user, req as MyRequest);
+      return signIn(user, req as MyRequest, false) as LoginResponse;
+    },
+
+    googleLogin: async (_, { input }: GoogleLoginArgs, { req }) => {
+      const { token } = input;
+
+      const client = new OAuth2Client(EnvVars.Google.ClientID);
+
+      try {
+        const ticket = await client.verifyIdToken({
+          idToken: token,
+          audience: EnvVars.Google.ClientID,
+        });
+        const { email } = ticket.getPayload();
+
+        let user = await UserModel.findOne({ email });
+        if (!user) {
+          user = new UserModel({ email });
+          await user.save();
+        }
+
+        return signIn(user, req as MyRequest, false) as LoginResponse;
+      } catch (error) {
+        throw new AuthenticationError('Invalid token');
+      }
     },
   },
 };

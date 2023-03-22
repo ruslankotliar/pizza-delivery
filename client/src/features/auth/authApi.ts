@@ -4,29 +4,47 @@ import {
   AuthApi,
   LoginResponseData,
   RegistrationResponseData,
-} from '../../types/authTypes';
+  UserGoogleLoginData,
+} from '../../types';
 import { gql } from '@apollo/client';
 import client from '../../api/graphql';
 import axios from 'axios';
 
 export const authApi: AuthApi = {
+  async googleLogin(data: UserGoogleLoginData): Promise<LoginResponseData> {
+    try {
+      const response = await client.mutate({
+        mutation: gql`
+          mutation GoogleLogin($input: GoogleLoginInput!) {
+            googleLogin(input: $input) {
+              token
+            }
+          }
+        `,
+        variables: {
+          input: data,
+        },
+      });
+
+      return response.data.login;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
   async login(data: UserLoginData): Promise<LoginResponseData> {
     try {
-      console.log(data);
       const response = await client.mutate({
         mutation: gql`
           mutation Login($input: LoginInput!) {
             login(input: $input) {
               id
-              avatar
             }
           }
         `,
         variables: {
-          input: {
-            email: data.email.toString(),
-            password: data.password.toString(),
-          },
+          input: data,
         },
       });
 

@@ -27,25 +27,42 @@ type LoginArgs = {
   };
 };
 
-type UserResponse = {
+type GoogleLoginArgs = {
+  input: {
+    token: string;
+  };
+};
+
+type LoginResponse = {
   id: string;
+};
+
+type RegisterResponse = {
+  id: string;
+  avatar: string;
 };
 
 type Resolvers = {
   Query: {
-    me: (_: any, __: any, context: any) => Promise<UserResponse>;
+    me: (_: any, __: any, context: any) => Promise<LoginResponse>;
   };
   Mutation: {
     register: (
       _: MyRequest,
       args: RegisterArgs,
       context: any
-    ) => Promise<UserResponse>;
+    ) => Promise<RegisterResponse>;
     login: (
       _: MyRequest,
       args: LoginArgs,
       context: any
-    ) => Promise<UserResponse>;
+    ) => Promise<LoginResponse>;
+
+    googleLogin: (
+      _: MyRequest,
+      args: GoogleLoginArgs,
+      context: any
+    ) => Promise<LoginResponse>;
   };
 };
 
@@ -54,6 +71,8 @@ export type {
   MyRequest,
   MyContext,
   RegisterArgs,
-  UserResponse,
   LoginArgs,
+  LoginResponse,
+  RegisterResponse,
+  GoogleLoginArgs,
 };

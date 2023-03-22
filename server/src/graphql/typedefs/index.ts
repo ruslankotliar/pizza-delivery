@@ -1,17 +1,26 @@
 import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
-  type UserResponse {
-    id: ID!
-  }
-
   type Query {
     me: UserResponse
+  }
+
+  type RegisterResponse {
+    id: ID!
+    avatar: String!
+  }
+
+  type LoginResponse {
+    id: ID!
   }
 
   input LoginInput {
     email: String!
     password: String!
+  }
+
+  input GoogleLoginInput {
+    token: String!
   }
 
   input RegisterInput {
@@ -24,7 +33,8 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    register(input: RegisterInput!): UserResponse!
-    login(input: LoginInput!): UserResponse!
+    register(input: RegisterInput!): RegisterResponse!
+    login(input: LoginInput!): LoginResponse!
+    googleLogin(input: GoogleLoginInput!): LoginResponse!
   }
 `;

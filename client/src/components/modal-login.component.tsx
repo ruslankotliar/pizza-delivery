@@ -4,9 +4,9 @@ import { Form, Input, Button, Checkbox, Modal, Typography, theme } from 'antd';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { FacebookFilled, GoogleSquareFilled } from '@ant-design/icons';
+import { GoogleSquareFilled } from '@ant-design/icons';
 import { useGoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
-import { UserLoginData } from '../types/authTypes';
+import { UserLoginData } from '../types';
 
 import { useDispatch } from 'react-redux';
 import { login } from '../features/auth/authActions';
@@ -21,14 +21,6 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   const { token } = theme.useToken();
   const [remember, setRemember] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
 
   const handleSubmit = async (values: UserLoginData) => {
     dispatch(login(values));
@@ -50,11 +42,6 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
     setRemember(e.target.checked);
   };
 
-  // facebook login
-  const handleFacebookLogin = () => {
-    // TODO: Implement Facebook login logic
-  };
-
   // google login
   useGoogleOneTapLogin({
     onSuccess: (tokenResponse) => {
@@ -71,60 +58,17 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   });
 
   return (
-    <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-      <Typography.Title style={{ textAlign: 'center' }} level={3}>
+    <Modal open={isModalOpen} footer={null}>
+      <Typography.Title
+        style={{ textAlign: 'center', marginTop: 20 }}
+        level={3}
+      >
         Login
       </Typography.Title>
-      <Form style={{ padding: '0 5em' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            width: '100%',
-          }}
-        >
-          <Form.Item style={{ width: '47.5%' }}>
-            <Button
-              className={'login-button login-button-facebook'}
-              icon={
-                <FacebookFilled
-                  style={{
-                    fontSize: '1.5em',
-                    backgroundColor: '#0d6490',
-                    color: 'white',
-                  }}
-                />
-              }
-              type='primary'
-              onClick={handleFacebookLogin}
-            >
-              Facebook
-            </Button>
-          </Form.Item>
-          <Form.Item style={{ width: '47.5%' }}>
-            <Button
-              className={'login-button login-button-google'}
-              icon={
-                <GoogleSquareFilled
-                  style={{
-                    fontSize: '1.5em',
-                    backgroundColor: '#000',
-                    color: 'white',
-                  }}
-                />
-              }
-              type='primary'
-              onClick={() => handleGoogleLogin()}
-            >
-              Google
-            </Button>
-          </Form.Item>
-        </div>
-      </Form>
       <Form
         layout='vertical'
         onFinish={formik.handleSubmit}
-        style={{ padding: '0 5em' }}
+        style={{ padding: '0 5em', marginBottom: 20 }}
       >
         <Form.Item
           label='Email'
@@ -182,6 +126,22 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
             Log in
           </Button>
         </Form.Item>
+        <Button
+          className={'login-button login-button-google'}
+          icon={
+            <GoogleSquareFilled
+              style={{
+                fontSize: '1.5em',
+                backgroundColor: '#000',
+                color: 'white',
+              }}
+            />
+          }
+          type='primary'
+          onClick={() => handleGoogleLogin()}
+        >
+          Google
+        </Button>
         <div style={{ border: '1px dashed #ccc', margin: '16px 0' }} />
         <div style={{ marginTop: '16px' }}>
           Not a member yet? <a href='/register'>Register now</a>
