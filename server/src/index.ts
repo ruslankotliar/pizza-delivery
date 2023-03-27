@@ -14,7 +14,11 @@ const SERVER_START_MSG =
 const MONGODB_URI = `mongodb+srv://${EnvVars.Mongo.Name}:${EnvVars.Mongo.Password}@pizza-delivery.skygb5r.mongodb.net/?retryWrites=true&w=majority`;
 
 server.listen(EnvVars.Port, async () => {
-  logger.info(SERVER_START_MSG);
-  await connect(MONGODB_URI);
-  logger.info('Connected to database');
+  try {
+    logger.info(SERVER_START_MSG);
+    await connect(MONGODB_URI);
+    logger.info('Connected to database');
+  } catch (error) {
+    logger.err(error);
+  }
 });

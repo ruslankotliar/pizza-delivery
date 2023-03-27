@@ -17,7 +17,7 @@ export const authApi: AuthApi = {
         mutation: gql`
           mutation GoogleLogin($input: GoogleLoginInput!) {
             googleLogin(input: $input) {
-              token
+              id
             }
           }
         `,
@@ -26,7 +26,7 @@ export const authApi: AuthApi = {
         },
       });
 
-      return response.data.login;
+      return response.data.googleLogin;
     } catch (error) {
       console.error(error);
       throw error;

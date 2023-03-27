@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   LoginResponseData,
+  UserGoogleLoginData,
   UserLoginData,
   UserRegistrationData,
 } from '../../types';
@@ -46,10 +47,11 @@ export const login = createAsyncThunk(
 
 export const googleLogin = createAsyncThunk(
   'auth/googleLogin',
-  async (data: UserLoginData, { dispatch }) => {
+  async (data: UserGoogleLoginData, { dispatch }) => {
     dispatch(setLoading(true));
     try {
-      const response = await authApi.login(data);
+      const response = await authApi.googleLogin(data);
+      console.log(response);
       finishAuth(dispatch, response);
     } catch (error) {
       if (error instanceof Error) dispatch(setError(error.message));

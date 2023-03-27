@@ -5,11 +5,11 @@ import { Form, Input, Button, Checkbox, Modal, Typography, theme } from 'antd';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { GoogleSquareFilled } from '@ant-design/icons';
-import { useGoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 import { UserLoginData } from '../types';
 
 import { useDispatch } from 'react-redux';
-import { login } from '../features/auth/authActions';
+import { login, googleLogin } from '../features/auth/authActions';
 import { AppDispatch } from '../app/store';
 
 const LoginSchema = Yup.object().shape({
@@ -22,11 +22,23 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   const [remember, setRemember] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleSubmit = async (values: UserLoginData) => {
-    dispatch(login(values));
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const redirectToMain = (): void => {
     setTimeout(() => {
       window.location.href = '/';
     }, 250);
+  };
+
+  const handleSubmit = async (values: UserLoginData) => {
+    dispatch(login(values));
+    redirectToMain();
   };
 
   const formik = useFormik({
@@ -43,22 +55,16 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   };
 
   // google login
-  useGoogleOneTapLogin({
-    onSuccess: (tokenResponse) => {
-      console.log(tokenResponse);
-    },
-    onError: () => console.error('Login Error'),
-  });
-
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-      console.log(tokenResponse);
+      dispatch(googleLogin({ token: tokenResponse.access_token }));
+      redirectToMain();
     },
     onError: (errorResponse) => console.error(errorResponse),
   });
 
   return (
-    <Modal open={isModalOpen} footer={null}>
+    <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
       <Typography.Title
         style={{ textAlign: 'center', marginTop: 20 }}
         level={3}
