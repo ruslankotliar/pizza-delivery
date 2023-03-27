@@ -1,8 +1,19 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { UserLoginData, UserRegistrationData } from '../../types/authTypes';
+import {
+  LoginResponseData,
+  UserGoogleLoginData,
+  UserLoginData,
+  UserRegistrationData,
+} from '../../types';
 import { setCookie } from '../../utils';
 import { authApi } from './authApi';
 import { setLogged, setLoading, setError, clearError } from './authSlice';
+
+const finishAuth = (dispatch: any, data: LoginResponseData) => {
+  setCookie('pizza-delivery-user-jwt', data.id, 30);
+  dispatch(setLogged(true));
+  dispatch(clearError());
+};
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -10,9 +21,7 @@ export const register = createAsyncThunk(
     dispatch(setLoading(true));
     try {
       const response = await authApi.register(data);
-      setCookie('pizza-delivery-user', response.id, 30);
-      dispatch(setLogged(true));
-      dispatch(clearError());
+      finishAuth(dispatch, response);
     } catch (error) {
       if (error instanceof Error) dispatch(setError(error.message));
     } finally {
@@ -27,9 +36,23 @@ export const login = createAsyncThunk(
     dispatch(setLoading(true));
     try {
       const response = await authApi.login(data);
-      setCookie('pizza-delivery-user', response.id, 30);
-      dispatch(setLogged(true));
-      dispatch(clearError());
+      finishAuth(dispatch, response);
+    } catch (error) {
+      if (error instanceof Error) dispatch(setError(error.message));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
+);
+
+export const googleLogin = createAsyncThunk(
+  'auth/googleLogin',
+  async (data: UserGoogleLoginData, { dispatch }) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await authApi.googleLogin(data);
+      console.log(response);
+      finishAuth(dispatch, response);
     } catch (error) {
       if (error instanceof Error) dispatch(setError(error.message));
     } finally {

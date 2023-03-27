@@ -7,4 +7,11 @@ interface User {
   avatar: string;
 }
 
-export { User };
+interface GoogleUser {
+  email: string;
+  given_name: string;
+  family_name: string;
+  picture: string;
+}
+
+export { User, GoogleUser };

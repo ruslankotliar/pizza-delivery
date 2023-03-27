@@ -3,7 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Upload, Input, Row, Col } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { UserRegistrationData } from '../types/authTypes';
+import { UserRegistrationData } from '../types';
 
 import { useDispatch } from 'react-redux';
 import { register } from '../features/auth/authActions';
@@ -42,6 +42,9 @@ export const RegistrationPageComponent = () => {
 
   const handleSubmit = async (values: UserRegistrationData) => {
     dispatch(register({ ...values, avatar: avatar }));
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 250);
   };
 
   return (
