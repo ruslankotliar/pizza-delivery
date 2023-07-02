@@ -9,6 +9,7 @@ import {
 import { gql } from '@apollo/client';
 import client from '../../api/graphql';
 import axios from 'axios';
+import { UPLOAD_AVATAR } from '../../consts';
 
 export const authApi: AuthApi = {
   async googleLogin(data: UserGoogleLoginData): Promise<LoginResponseData> {
@@ -59,30 +60,26 @@ export const authApi: AuthApi = {
     data: UserRegistrationData
   ): Promise<RegistrationResponseData> {
     try {
+      let avatar = 'default url'; // default, change later
+
+      if (data.avatar) {
+        const formData = new FormData();
+        formData.append('image', data.avatar);
+
+        const response = await axios.post(UPLOAD_AVATAR, formData);
+        avatar = response.data;
+      }
+
       const response = await client.mutate({
         mutation: gql`
           mutation Register($input: RegisterInput!) {
             register(input: $input) {
               id
-              avatar
             }
           }
         `,
         variables: {
-          input: {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            password: data.password,
-            confirmPassword: data.confirmPassword,
-            avatar: !!data.avatar,
-          },
-        },
-      });
-
-      await axios.put(response.data.register.avatar, data.avatar, {
-        headers: {
-          'Content-Type': 'image/jpeg',
+          input: { ...data, avatar },
         },
       });
 

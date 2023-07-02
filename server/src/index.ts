@@ -5,13 +5,14 @@ import { connect } from 'mongoose';
 import EnvVars from './constants/EnvVars';
 import server from './server';
 
+
 // **** Run **** //
 
 const SERVER_START_MSG =
   'Express server started on port: ' + EnvVars.Port.toString();
 
 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-const MONGODB_URI = `mongodb+srv://${EnvVars.Mongo.Name}:${EnvVars.Mongo.Password}@pizza-delivery.skygb5r.mongodb.net/?retryWrites=true&w=majority`;
+const MONGODB_URI = `mongodb+srv://${EnvVars.Mongo.Name}:${EnvVars.Mongo.Password}@pizza-delivery.jxh4vba.mongodb.net/?retryWrites=true&w=majority`;
 
 server.listen(EnvVars.Port, async () => {
   try {
@@ -22,3 +23,7 @@ server.listen(EnvVars.Port, async () => {
     logger.err(error);
   }
 });
+
+
+
+

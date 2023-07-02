@@ -21,5 +21,6 @@ const ABOUT_ME = {
   gitHub: 'https://github.com/ruslankotliar',
 };
 
+const UPLOAD_AVATAR = 'http://localhost:4000/uploadAvatar';
 
-export { ROUTER_KEYS, ABOUT_ME, NAV_KEYS };
+export { ROUTER_KEYS, ABOUT_ME, NAV_KEYS, UPLOAD_AVATAR };
