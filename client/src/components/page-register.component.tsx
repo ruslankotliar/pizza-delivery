@@ -42,9 +42,9 @@ export const RegistrationPageComponent = () => {
 
   const handleSubmit = async (values: UserRegistrationData) => {
     dispatch(register({ ...values, avatar: avatar }));
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 250);
+    // setTimeout(() => {
+    //   window.location.href = '/';
+    // }, 250);
   };
 
   return (

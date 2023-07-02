@@ -8,29 +8,23 @@ import axios from 'axios';
 
 import { User } from '../../types/user';
 import { GoogleUserResponse } from '../../types/axios';
-import { uploadUserAvatar } from '../../util';
+
 import {
   Resolvers,
   RegisterArgs,
   MyRequest,
   MyContext,
   LoginArgs,
-  RegisterResponse,
-  LoginResponse,
   GoogleLoginArgs,
+  AuthResponse,
 } from '../../types/resolvers';
 
-const signIn = (user: User, req: MyRequest, register: boolean) => {
+const signIn = (user: User, req: MyRequest) => {
   req.session.userId = user._id;
 
-  return register
-    ? {
-        id: user._id,
-        avatar: user.avatar,
-      }
-    : {
-        id: user._id,
-      };
+  return {
+    id: user._id,
+  };
 };
 
 export const resolvers: Resolvers = {
@@ -57,48 +51,61 @@ export const resolvers: Resolvers = {
   },
   Mutation: {
     register: async (_, { input }: RegisterArgs, { req }) => {
-      const { firstName, lastName, email, password, confirmPassword, avatar } =
-        input;
-      if (password !== confirmPassword) {
-        throw new Error('Passwords do not match');
+      try {
+        const {
+          firstName,
+          lastName,
+          email,
+          password,
+          confirmPassword,
+          avatar,
+        } = input;
+        if (password !== confirmPassword) {
+          throw new Error('Passwords do not match');
+        }
+
+        const existingUser = await UserModel.findOne({ email });
+
+        if (existingUser) {
+          throw new Error('Email already registered');
+        }
+
+        const user = new UserModel({
+          firstName,
+          lastName,
+          email,
+          password,
+          avatar,
+        });
+
+        await user.save();
+
+        return signIn(user, req as MyRequest) as AuthResponse;
+      } catch (error) {
+        console.error(error);
       }
-
-      const existingUser = await UserModel.findOne({ email });
-
-      if (existingUser) {
-        throw new Error('Email already registered');
-      }
-
-      const user = new UserModel({ firstName, lastName, email, password });
-
-      if (avatar) {
-        user.avatar = await uploadUserAvatar();
-      } else {
-        // generate random avatar here
-        user.avatar = 'fasdfasd';
-      }
-
-      await user.save();
-
-      return signIn(user, req as MyRequest, true) as RegisterResponse;
     },
 
     login: async (_, { input }: LoginArgs, { req }) => {
-      const { email, password } = input;
+      try {
+        const { email, password } = input;
 
-      const user = await UserModel.findOne({ email });
+        const user = await UserModel.findOne({ email });
 
-      if (!user) {
-        throw new Error('Invalid email or password');
+        if (!user) {
+          throw new Error('Invalid email or password');
+        }
+
+        const validPassword = await user.comparePassword(password);
+
+        if (!validPassword) {
+          throw new Error('Invalid email or password');
+        }
+
+        return signIn(user, req as MyRequest) as AuthResponse;
+      } catch (error) {
+        console.error(error);
       }
-
-      const validPassword = await user.comparePassword(password);
-
-      if (!validPassword) {
-        throw new Error('Invalid email or password');
-      }
-
-      return signIn(user, req as MyRequest, false) as LoginResponse;
     },
 
     googleLogin: async (_, { input }: GoogleLoginArgs, { req }) => {
@@ -124,7 +131,7 @@ export const resolvers: Resolvers = {
           await user.save();
         }
 
-        return signIn(user, req as MyRequest, false) as LoginResponse;
+        return signIn(user, req as MyRequest) as AuthResponse;
       } catch (error) {
         console.error(error);
         throw new AuthenticationError('Invalid token');

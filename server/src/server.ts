@@ -7,6 +7,10 @@ import session, { SessionData } from 'express-session';
 import { typeDefs } from './graphql/typedefs';
 import { resolvers } from './graphql/resolvers';
 import logger from 'jet-logger';
+import cors from 'cors';
+
+import { uploadUserAvatar } from './util';
+import { UPLOAD_AVATAR } from './constants/app';
 
 import 'express-async-errors';
 
@@ -79,6 +83,31 @@ app.use(
     }
     const status = HttpStatusCodes.BAD_REQUEST;
     return res.status(status).json({ error: err.message });
+  }
+);
+
+app.use(cors());
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+interface CustomFile extends Express.Multer.File {
+  location: string;
+}
+
+app.post(
+  UPLOAD_AVATAR,
+  uploadUserAvatar.single('image'),
+  function (req: Request, res: Response) {
+    if (req.file) {
+
+      const imageUrl: string = (req.file as CustomFile).location;
+
+      res
+        .status(200)
+        .json(imageUrl);
+    } else {
+      // No file was uploaded
+      res.status(400).json({ error: 'No file uploaded' });
+    }
   }
 );
 
