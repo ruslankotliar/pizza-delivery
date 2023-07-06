@@ -7,7 +7,7 @@ import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { ProtectedRoute } from '../components';
 import { LayoutComponent } from '../layouts';
 
-import { ROUTER_KEYS } from '../consts';
+import { ROUTER_KEYS } from '../constants';
 import routes from '../routes';
 
 interface Component {

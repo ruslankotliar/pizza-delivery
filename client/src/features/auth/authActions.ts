@@ -1,27 +1,22 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
-  LoginResponseData,
   UserGoogleLoginData,
   UserLoginData,
   UserRegistrationData,
 } from '../../types';
-import { setCookie } from '../../utils';
 import { authApi } from './authApi';
-import { setLogged, setLoading, setError, clearError } from './authSlice';
-
-const finishAuth = (dispatch: any, data: LoginResponseData) => {
-  setCookie('pizza-delivery-user-jwt', data.id, 30);
-  dispatch(setLogged(true));
-  dispatch(clearError());
-};
+import { setLoading, setError } from './authSlice';
+import { finishAuth } from '../../utils';
+import { AppDispatch } from '../../app/store';
 
 export const register = createAsyncThunk(
   'auth/register',
-  async (data: UserRegistrationData, { dispatch }) => {
+  async (input: UserRegistrationData, { dispatch }) => {
     dispatch(setLoading(true));
     try {
-      const response = await authApi.register(data);
-      finishAuth(dispatch, response);
+      const res = await authApi.register(input);
+
+      finishAuth(dispatch as AppDispatch, res.token);
     } catch (error) {
       if (error instanceof Error) dispatch(setError(error.message));
     } finally {
@@ -32,11 +27,12 @@ export const register = createAsyncThunk(
 
 export const login = createAsyncThunk(
   'auth/login',
-  async (data: UserLoginData, { dispatch }) => {
+  async (input: UserLoginData, { dispatch }) => {
     dispatch(setLoading(true));
     try {
-      const response = await authApi.login(data);
-      finishAuth(dispatch, response);
+      const res = await authApi.login(input);
+
+      finishAuth(dispatch as AppDispatch, res.token);
     } catch (error) {
       if (error instanceof Error) dispatch(setError(error.message));
     } finally {
@@ -47,12 +43,12 @@ export const login = createAsyncThunk(
 
 export const googleLogin = createAsyncThunk(
   'auth/googleLogin',
-  async (data: UserGoogleLoginData, { dispatch }) => {
+  async (input: UserGoogleLoginData, { dispatch }) => {
     dispatch(setLoading(true));
     try {
-      const response = await authApi.googleLogin(data);
-      console.log(response);
-      finishAuth(dispatch, response);
+      const res = await authApi.googleLogin(input);
+
+      finishAuth(dispatch as AppDispatch, res.token);
     } catch (error) {
       if (error instanceof Error) dispatch(setError(error.message));
     } finally {

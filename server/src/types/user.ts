@@ -1,10 +1,15 @@
+import { Document } from 'mongoose';
+
 interface User {
-  _id: string;
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+  password?: string;
   avatar: string;
+}
+
+interface StoredUser extends User {
+  _id: string;
 }
 
 interface GoogleUser {
@@ -14,4 +19,8 @@ interface GoogleUser {
   picture: string;
 }
 
-export { User, GoogleUser };
+interface UserDocument extends Document, User {
+  comparePassword: (password: string) => Promise<boolean>;
+}
+
+export { User, GoogleUser, StoredUser, UserDocument };

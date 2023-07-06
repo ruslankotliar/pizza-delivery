@@ -16,17 +16,12 @@ export interface UserGoogleLoginData {
   token: string;
 }
 
-export interface LoginResponseData {
-  id: string;
-}
-
-export interface RegistrationResponseData {
-  id: string;
-  avatar: string;
+export interface AuthResponseData {
+  token: string;
 }
 
 export interface AuthApi {
-  googleLogin: (data: UserGoogleLoginData) => Promise<LoginResponseData>;
-  login: (data: UserLoginData) => Promise<LoginResponseData>;
-  register: (data: UserRegistrationData) => Promise<RegistrationResponseData>;
+  googleLogin: (data: UserGoogleLoginData) => Promise<AuthResponseData>;
+  login: (data: UserLoginData) => Promise<AuthResponseData>;
+  register: (data: UserRegistrationData) => Promise<AuthResponseData>;
 }

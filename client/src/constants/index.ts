@@ -2,6 +2,7 @@ const ROUTER_KEYS = {
   MAIN: '/',
   MENU: '/menu?filter=',
   USER_REGISTER: '/register',
+  USER_PROFILE: '/profile'
 };
 
 const NAV_KEYS = [

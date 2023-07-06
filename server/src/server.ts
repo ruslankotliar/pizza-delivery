@@ -1,27 +1,20 @@
-import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import express, { Request, Response, NextFunction } from 'express';
-import { ApolloServer } from 'apollo-server-express';
-import session, { SessionData } from 'express-session';
+import { ApolloError, ApolloServer } from 'apollo-server-express';
 import { typeDefs } from './graphql/typedefs';
 import { resolvers } from './graphql/resolvers';
 import logger from 'jet-logger';
 import cors from 'cors';
-
-import { uploadUserAvatar } from './util';
-import { UPLOAD_AVATAR } from './constants/app';
 
 import 'express-async-errors';
 
 import EnvVars from './constants/EnvVars';
 import HttpStatusCodes from './constants/HttpStatusCodes';
 
-import { NodeEnvs } from './constants/misc';
-
-interface Session extends SessionData {
-  userId?: string;
-}
+import { NodeEnvs, UPLOAD_AVATAR } from './constants';
+import { getSessionData } from './util/SessionUtil';
+import { uploadUserAvatar } from './helpers/uploadAvatarHelper';
 
 // **** Variables **** //
 const app = express();
@@ -29,9 +22,25 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  context: ({ req, res }) => {
-    const session = req.session as Session;
-    return { req, res, userId: session.userId };
+  context: async ({ req, res }) => {
+    const userId = await getSessionData(req);
+
+    return {
+      req,
+      res,
+      userId,
+    };
+  },
+  formatError: (error: ApolloError) => {
+    const status: number = (error.extensions?.code ||
+      HttpStatusCodes.BAD_REQUEST) as number;
+
+    return {
+      message: error.message,
+      extensions: {
+        code: status,
+      },
+    };
   },
 });
 
@@ -40,7 +49,6 @@ const server = new ApolloServer({
 // Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser(EnvVars.CookieProps.Secret));
 
 const startServer = async () => {
   await server.start();
@@ -58,17 +66,6 @@ if (EnvVars.NodeEnv === NodeEnvs.Production) {
   app.use(helmet());
 }
 
-// Add APIs, must be after middleware
-app.use(
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  session({
-    secret: 'mysecret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: true },
-  })
-);
-
 // Add error handler
 app.use(
   (
@@ -81,6 +78,7 @@ app.use(
     if (EnvVars.NodeEnv !== NodeEnvs.Test) {
       logger.err(err, true);
     }
+
     const status = HttpStatusCodes.BAD_REQUEST;
     return res.status(status).json({ error: err.message });
   }
@@ -98,12 +96,9 @@ app.post(
   uploadUserAvatar.single('image'),
   function (req: Request, res: Response) {
     if (req.file) {
-
       const imageUrl: string = (req.file as CustomFile).location;
 
-      res
-        .status(200)
-        .json(imageUrl);
+      res.status(200).json(imageUrl);
     } else {
       // No file was uploaded
       res.status(400).json({ error: 'No file uploaded' });

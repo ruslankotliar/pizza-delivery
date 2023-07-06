@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Form, Input, Button, Checkbox, Modal, Typography, theme } from 'antd';
 
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { GoogleSquareFilled } from '@ant-design/icons';
 import { useGoogleLogin } from '@react-oauth/google';
@@ -19,7 +19,7 @@ const LoginSchema = Yup.object().shape({
 
 export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   const { token } = theme.useToken();
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(false); // actually useless
   const dispatch = useDispatch<AppDispatch>();
 
   const handleOk = () => {
@@ -30,15 +30,13 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
     setIsModalOpen(false);
   };
 
-  const redirectToMain = (): void => {
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 250);
-  };
-
-  const handleSubmit = async (values: UserLoginData) => {
+  const handleSubmit = async (
+    values: UserLoginData,
+    { resetForm }: FormikHelpers<UserLoginData>
+  ) => {
     dispatch(login(values));
-    redirectToMain();
+    setIsModalOpen(false);
+    resetForm();
   };
 
   const formik = useFormik({
@@ -58,7 +56,7 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       dispatch(googleLogin({ token: tokenResponse.access_token }));
-      redirectToMain();
+      setIsModalOpen(false);
     },
     onError: (errorResponse) => console.error(errorResponse),
   });

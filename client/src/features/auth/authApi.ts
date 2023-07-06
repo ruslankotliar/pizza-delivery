@@ -2,23 +2,22 @@ import {
   UserLoginData,
   UserRegistrationData,
   AuthApi,
-  LoginResponseData,
-  RegistrationResponseData,
   UserGoogleLoginData,
+  AuthResponseData,
 } from '../../types';
 import { gql } from '@apollo/client';
 import client from '../../api/graphql';
 import axios from 'axios';
-import { UPLOAD_AVATAR } from '../../consts';
+import { UPLOAD_AVATAR } from '../../constants';
 
 export const authApi: AuthApi = {
-  async googleLogin(data: UserGoogleLoginData): Promise<LoginResponseData> {
+  async googleLogin(data: UserGoogleLoginData): Promise<AuthResponseData> {
     try {
       const response = await client.mutate({
         mutation: gql`
           mutation GoogleLogin($input: GoogleLoginInput!) {
             googleLogin(input: $input) {
-              id
+              token
             }
           }
         `,
@@ -34,13 +33,13 @@ export const authApi: AuthApi = {
     }
   },
 
-  async login(data: UserLoginData): Promise<LoginResponseData> {
+  async login(data: UserLoginData): Promise<AuthResponseData> {
     try {
       const response = await client.mutate({
         mutation: gql`
           mutation Login($input: LoginInput!) {
             login(input: $input) {
-              id
+              token
             }
           }
         `,
@@ -56,9 +55,7 @@ export const authApi: AuthApi = {
     }
   },
 
-  async register(
-    data: UserRegistrationData
-  ): Promise<RegistrationResponseData> {
+  async register(data: UserRegistrationData): Promise<AuthResponseData> {
     try {
       let avatar = 'default url'; // default, change later
 
@@ -74,7 +71,7 @@ export const authApi: AuthApi = {
         mutation: gql`
           mutation Register($input: RegisterInput!) {
             register(input: $input) {
-              id
+              token
             }
           }
         `,
