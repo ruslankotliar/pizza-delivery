@@ -5,15 +5,14 @@ import { Button, Upload, Input, Row, Col } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { UserRegistrationData } from '../types';
 
-import { useDispatch } from 'react-redux';
 import { register } from '../features/auth/authActions';
-import { AppDispatch } from '../app/store';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../app/hooks';
 
 export const RegistrationPageComponent = () => {
   const navigate = useNavigate();
   const [avatar, setAvatar] = useState<File | undefined>(undefined);
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const initialValues: UserRegistrationData = {
     firstName: '',

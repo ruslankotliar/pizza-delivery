@@ -11,7 +11,7 @@ import { ROUTER_KEYS } from '../constants';
 import routes from '../routes';
 
 interface Component {
-  element: () => JSX.Element;
+  element: React.FC<any>;
   path: string;
   protectedRoute: boolean;
   key: string;

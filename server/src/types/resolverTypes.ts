@@ -38,14 +38,11 @@ type AuthResponse = {
   token: string;
 };
 
-type AvatarResponse = {
-  avatar: string;
-};
-
 type UserDataResponse = {
   firstName: string;
   lastName: string;
   email: string;
+  avatar: string;
 };
 
 interface AuthResolverInterface {
@@ -68,11 +65,6 @@ interface AuthResolverInterface {
 }
 
 interface UserResolverInterface {
-  userAvatar: (
-    _: any,
-    __: any,
-    context: MyContext
-  ) => Promise<AvatarResponse | undefined>;
   userData: (
     _: any,
     __: any,
@@ -96,7 +88,6 @@ export type {
   LoginArgs,
   AuthResponse,
   GoogleLoginArgs,
-  AvatarResponse,
   AuthResolverInterface,
   UserResolverInterface,
 };

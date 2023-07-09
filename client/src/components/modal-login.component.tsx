@@ -8,9 +8,8 @@ import { GoogleSquareFilled } from '@ant-design/icons';
 import { useGoogleLogin } from '@react-oauth/google';
 import { UserLoginData } from '../types';
 
-import { useDispatch } from 'react-redux';
 import { login, googleLogin } from '../features/auth/authActions';
-import { AppDispatch } from '../app/store';
+import { useAppDispatch } from '../app/hooks';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email address').required('Required'),
@@ -20,7 +19,7 @@ const LoginSchema = Yup.object().shape({
 export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   const { token } = theme.useToken();
   const [remember, setRemember] = useState(false); // actually useless
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const handleOk = () => {
     setIsModalOpen(false);

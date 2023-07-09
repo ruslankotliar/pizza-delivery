@@ -9,7 +9,6 @@ export const typeDefs = gql`
   ${authTypeDefs}
 
   type Query {
-    userAvatar: AvatarResponse
     userData: UserDataResponse
   }
 

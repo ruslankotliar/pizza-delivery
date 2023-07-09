@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { StringParam, useQueryParam } from 'use-query-params';
 import {
   Layout,
@@ -26,11 +25,9 @@ import { GiFullPizza } from 'react-icons/gi';
 import { ABOUT_ME, NAV_KEYS, ROUTER_KEYS } from '../constants';
 import { deleteCookie, throttle } from '../utils';
 import { ModalLoginComponent } from '../components';
-
-import { AppDispatch, RootState } from '../app/store';
-import { getUserAvatar } from '../features/user/userActions';
-import { setAvatar } from '../features/user/userSlice';
 import { setLogged } from '../features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { withUserData } from '../hocs';
 
 const { Content, Footer } = Layout;
 
@@ -39,15 +36,22 @@ interface Props {
 }
 
 export const LayoutComponent: React.FC<Props> = ({ children }) => {
-  const dispatch = useDispatch<AppDispatch>();
-  dispatch(getUserAvatar());
+  return (
+    <Layout>
+      <HeaderComponent />
+      <Content className='site-layout'>{children}</Content>
+      <FooterComponent />
+    </Layout>
+  );
+};
+
+const HeaderComponent = withUserData(({ user }) => {
   const { token } = theme.useToken();
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [filter] = useQueryParam('filter', StringParam);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const isLogged = useSelector((state: RootState) => state.auth.isLogged);
-  const avatar = useSelector((state: RootState) => state.user.avatar);
+  const isLogged = useAppSelector((state) => state.auth.isLogged);
 
   useEffect(() => {
     if (pathname === '/') {
@@ -67,7 +71,7 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
   }, []);
 
   return (
-    <Layout>
+    <>
       <ModalLoginComponent
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
@@ -113,7 +117,9 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
               {item.label}
             </NavLink>
           ))}
-          {!isLogged ? (
+          {isLogged && user ? (
+            <ProfileNavigationButton avatar={user.avatar} />
+          ) : (
             <Button
               type='primary'
               onClick={() => setIsModalOpen(true)}
@@ -124,26 +130,21 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
             >
               ORDER NOW
             </Button>
-          ) : (
-            <ProfileNavigationButton dispatch={dispatch} avatar={avatar} />
           )}
         </div>
       </header>
-      <Content className='site-layout'>{children}</Content>
-      <FooterComponent />
-    </Layout>
+    </>
   );
-};
+});
 
 interface ProfileNavProps {
   avatar: string | null;
-  dispatch: AppDispatch;
 }
 
-const ProfileNavigationButton = ({ avatar, dispatch }: ProfileNavProps) => {
+const ProfileNavigationButton = ({ avatar }: ProfileNavProps) => {
+  const dispatch = useAppDispatch();
   const logOut = function () {
     dispatch(setLogged(false));
-    dispatch(setAvatar(null));
     deleteCookie('pizza-delivery-user-jwt');
   };
 

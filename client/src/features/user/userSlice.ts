@@ -4,14 +4,12 @@ import { User } from '../../types';
 interface UserState {
   isLoading: boolean;
   error: string | null;
-  avatar: string | null;
   user: User | null;
 }
 
 const initialState: UserState = {
   isLoading: false,
   error: null,
-  avatar: null,
   user: null,
 };
 
@@ -19,12 +17,9 @@ const authSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setAvatar: (state, action: PayloadAction<string | null>) => {
-      state.avatar = action.payload;
-    },
     setUser: (state, action: PayloadAction<User | null>) => {
-        state.user = action.payload;
-      },
+      state.user = action.payload;
+    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
@@ -37,7 +32,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setLoading, setError, clearError, setAvatar } =
-  authSlice.actions;
+export const { setUser, setLoading, setError, clearError } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,19 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { userApi } from './userApi';
-import { setAvatar, setError, setUser } from './userSlice';
-
-export const getUserAvatar = createAsyncThunk(
-  'user/avatar',
-  async (_, { dispatch }) => {
-    try {
-      const res = await userApi.getAvatar();
-      console.log(res);
-      dispatch(setAvatar(res.avatar));
-    } catch (error) {
-      if (error instanceof Error) dispatch(setError(error.message));
-    }
-  }
-);
+import { setError, setUser } from './userSlice';
 
 export const getUserData = createAsyncThunk(
   'user/data',

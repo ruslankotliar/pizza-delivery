@@ -12,24 +12,6 @@ import { userEntity } from '../../entities';
 import HttpStatusCodes from '../../constants/HttpStatusCodes';
 
 export const userResolver: UserResolverInterface = {
-  userAvatar: async (_: Request, __: Response, { userId }: MyContext) => {
-    if (!userId) {
-      throw new GraphQLError(RESPONSE_MESSAGE.USER.FAIL.NOT_AUTH, {
-        extensions: { code: HttpStatusCodes.UNAUTHORIZED },
-      });
-    }
-
-    const user = await userEntity.findUserById(userId);
-
-    if (!user) {
-      throw new GraphQLError(RESPONSE_MESSAGE.USER.FAIL.NOT_EXIST, {
-        extensions: { code: HttpStatusCodes.UNAUTHORIZED },
-      });
-    }
-
-    return { avatar: user.avatar };
-  },
-
   userData: async (_: Request, __: Response, { userId }: MyContext) => {
     if (!userId) {
       throw new GraphQLError(RESPONSE_MESSAGE.USER.FAIL.NOT_AUTH, {
@@ -45,10 +27,11 @@ export const userResolver: UserResolverInterface = {
       });
     }
 
-    return { 
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email
-     };
+    return {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      avatar: user.avatar,
+    };
   },
 };
