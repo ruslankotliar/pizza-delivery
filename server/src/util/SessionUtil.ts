@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Request, Response } from 'express';
 
-import HttpStatusCodes from '../constants/HttpStatusCodes';
-import { RouteError } from '../other/classes';
 import jsonwebtoken from 'jsonwebtoken';
 
 import EnvVars from '../constants/EnvVars';
+import { GraphQLError } from 'graphql';
+import { RESPONSE_MESSAGE } from '../constants';
 
 // **** Variables **** //
 
@@ -26,10 +26,23 @@ const Options = {
 /**
  * Get session data from request object (i.e. ISessionUser)
  */
-function getSessionData<T>(req: Request): Promise<string | T | undefined> {
-  const { Key } = EnvVars.CookieProps,
-    jwt = req.signedCookies[Key] as string;
-  return _decode(jwt);
+
+type JWT = {
+  id: string;
+  iat: number;
+  exp: number;
+};
+
+async function getSessionData<T>(
+  req: Request
+): Promise<string | T | undefined> {
+  try {
+    const jwt = req.headers.authorization?.split(' ')[1];
+    if (!jwt) return undefined;
+    else return (await _decode<JWT>(jwt))?.id as string;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 /**
@@ -38,23 +51,12 @@ function getSessionData<T>(req: Request): Promise<string | T | undefined> {
 async function addSessionData(
   res: Response,
   data: string | object
-): Promise<Response> {
+): Promise<string> {
   if (!res || !data) {
-    throw new RouteError(HttpStatusCodes.BAD_REQUEST, Errors.ParamFalsey);
+    throw new Error('Route error');
   }
-  // Setup JWT
-  const jwt = await _sign(data),
-    { Key, Options } = EnvVars.CookieProps;
-  // Return
-  return res.cookie(Key, jwt, Options);
-}
-
-/**
- * Remove cookie
- */
-function clearCookie(res: Response): Response {
-  const { Key, Options } = EnvVars.CookieProps;
-  return res.clearCookie(Key, Options);
+  // Setup and return JWT
+  return await _sign(data);
 }
 
 // **** Helper Functions **** //
@@ -73,7 +75,7 @@ function _sign(data: string | object | Buffer): Promise<string> {
 /**
  * Decrypt JWT and extract client data.
  */
-function _decode<T>(jwt: string): Promise<string | undefined | T> {
+function _decode<T>(jwt: string): Promise<undefined | T> {
   return new Promise((res, rej) => {
     jsonwebtoken.verify(jwt, EnvVars.Jwt.Secret, (err, decoded) => {
       return err ? rej(Errors.Validation) : res(decoded as T);
@@ -83,8 +85,4 @@ function _decode<T>(jwt: string): Promise<string | undefined | T> {
 
 // **** Export default **** //
 
-export default {
-  addSessionData,
-  getSessionData,
-  clearCookie,
-} as const;
+export { addSessionData, getSessionData };

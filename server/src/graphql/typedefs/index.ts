@@ -1,35 +1,21 @@
 import { gql } from 'apollo-server-express';
+import { userTypeDefs } from './userTypedef';
+import { authTypeDefs } from './authTypedef';
 
 export const typeDefs = gql`
+
+  ${userTypeDefs}
+
+  ${authTypeDefs}
+
   type Query {
-    me: AuthResponse
-  }
-
-  type AuthResponse {
-    id: ID!
-  }
-
-  input LoginInput {
-    email: String!
-    password: String!
-  }
-
-  input GoogleLoginInput {
-    token: String!
-  }
-
-  input RegisterInput {
-    firstName: String!
-    lastName: String!
-    email: String!
-    password: String!
-    confirmPassword: String!
-    avatar: String!
+    userData: UserDataResponse
   }
 
   type Mutation {
-    register(input: RegisterInput!): AuthResponse!
-    login(input: LoginInput!): AuthResponse!
-    googleLogin(input: GoogleLoginInput!): AuthResponse!
+    register(input: RegisterInput!): AuthResponse
+    login(input: LoginInput!): AuthResponse
+    googleLogin(input: GoogleLoginInput!): AuthResponse
   }
+
 `;

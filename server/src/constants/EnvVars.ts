@@ -27,5 +27,6 @@ export default {
     Access: process.env.AWS_ACCESS_KEY ?? '',
     Secret: process.env.AWS_SECRET_KEY ?? '',
     Region: process.env.AWS_REGION ?? '',
+    Bucket: process.env.AWS_BUCKET ?? '',
   },
 } as const;

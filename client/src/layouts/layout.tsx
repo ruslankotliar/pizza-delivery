@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { StringParam, useQueryParam } from 'use-query-params';
 import {
   Layout,
   Typography,
@@ -6,20 +8,26 @@ import {
   Row,
   Space,
   Image,
-  Button,
   Tooltip,
   theme,
+  Dropdown,
+  Button,
+  Avatar,
 } from 'antd';
+import type { MenuProps } from 'antd';
+import {
+  GithubOutlined,
+  LinkedinOutlined,
+  SmileOutlined,
+} from '@ant-design/icons';
 import { GiFullPizza } from 'react-icons/gi';
-import { ABOUT_ME, NAV_KEYS, ROUTER_KEYS } from '../consts';
-import { useLocation } from 'react-router-dom';
-import { throttle } from '../utils';
-import { StringParam, useQueryParam } from 'use-query-params';
-import { GithubOutlined, LinkedinOutlined } from '@ant-design/icons';
-import { ModalLoginComponent } from '../components';
 
-import { useSelector } from 'react-redux';
-import { RootState } from '../app/rootReducer';
+import { ABOUT_ME, NAV_KEYS, ROUTER_KEYS } from '../constants';
+import { deleteCookie, throttle } from '../utils';
+import { ModalLoginComponent } from '../components';
+import { setLogged } from '../features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { withUserData } from '../hocs';
 
 const { Content, Footer } = Layout;
 
@@ -28,12 +36,22 @@ interface Props {
 }
 
 export const LayoutComponent: React.FC<Props> = ({ children }) => {
+  return (
+    <Layout>
+      <HeaderComponent />
+      <Content className='site-layout'>{children}</Content>
+      <FooterComponent />
+    </Layout>
+  );
+};
+
+const HeaderComponent = withUserData(({ user }) => {
   const { token } = theme.useToken();
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [filter] = useQueryParam('filter', StringParam);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const isLogged = useSelector((state: RootState) => state.auth.isLogged);
+  const isLogged = useAppSelector((state) => state.auth.isLogged);
 
   useEffect(() => {
     if (pathname === '/') {
@@ -51,8 +69,9 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
-    <Layout>
+    <>
       <ModalLoginComponent
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
@@ -60,15 +79,13 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
       <header
         className={`header ${scrolled ? 'nav-scrolled' : 'nav-not-scrolled'}`}
       >
-        <div
+        <NavLink
+          to={'/'}
           className='logo'
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-          }}
-          onClick={() => {
-            window.location.href = '/';
           }}
         >
           <GiFullPizza color={token.colorPrimary} fontSize='3em' />
@@ -82,11 +99,12 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
           >
             Pizza Delivery
           </Typography.Title>
-        </div>
+        </NavLink>
         <div className='nav-button-container'>
           {NAV_KEYS.map((item) => (
-            <button
-              className={
+            <NavLink
+              to={ROUTER_KEYS.MENU + item.key}
+              className={`btn ${
                 filter === item.key && !scrolled
                   ? 'nav-button-active'
                   : filter === item.key && scrolled
@@ -94,29 +112,69 @@ export const LayoutComponent: React.FC<Props> = ({ children }) => {
                   : scrolled
                   ? 'nav-button-scrolled'
                   : 'nav-button'
-              }
-              onClick={() => {
-                window.location.href = ROUTER_KEYS.MENU + item.key;
-              }}
+              }`}
             >
               {item.label}
-            </button>
+            </NavLink>
           ))}
-          <Button
-            type='primary'
-            onClick={() => setIsModalOpen(true)}
-            style={{
-              color: token.colorPrimaryActive,
-              fontWeight: 600,
-            }}
-          >
-            ORDER NOW
-          </Button>
+          {isLogged && user ? (
+            <ProfileNavigationButton avatar={user.avatar} />
+          ) : (
+            <Button
+              type='primary'
+              onClick={() => setIsModalOpen(true)}
+              style={{
+                color: token.colorPrimaryActive,
+                fontWeight: 600,
+              }}
+            >
+              ORDER NOW
+            </Button>
+          )}
         </div>
       </header>
-      <Content className='site-layout'>{children}</Content>
-      <FooterComponent />
-    </Layout>
+    </>
+  );
+});
+
+interface ProfileNavProps {
+  avatar: string | null;
+}
+
+const ProfileNavigationButton = ({ avatar }: ProfileNavProps) => {
+  const dispatch = useAppDispatch();
+  const logOut = function () {
+    dispatch(setLogged(false));
+    deleteCookie('pizza-delivery-user-jwt');
+  };
+
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: <NavLink to={ROUTER_KEYS.USER_PROFILE}>Me</NavLink>,
+      icon: <SmileOutlined />,
+    },
+    {
+      key: '2',
+      label: <NavLink to='orders'>Orders</NavLink>,
+    },
+    {
+      key: '4',
+      danger: true,
+      label: 'Log out',
+      onClick: () => logOut(),
+    },
+  ];
+
+  return (
+    <Dropdown menu={{ items }} placement='bottomRight' arrow>
+      <Avatar
+        style={{ cursor: 'pointer' }}
+        size='large'
+        src={avatar}
+        alt='Profile Avatar'
+      />
+    </Dropdown>
   );
 };
 

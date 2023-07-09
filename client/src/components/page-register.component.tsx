@@ -5,13 +5,14 @@ import { Button, Upload, Input, Row, Col } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { UserRegistrationData } from '../types';
 
-import { useDispatch } from 'react-redux';
 import { register } from '../features/auth/authActions';
-import { AppDispatch } from '../app/store';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../app/hooks';
 
 export const RegistrationPageComponent = () => {
+  const navigate = useNavigate();
   const [avatar, setAvatar] = useState<File | undefined>(undefined);
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const initialValues: UserRegistrationData = {
     firstName: '',
@@ -42,9 +43,9 @@ export const RegistrationPageComponent = () => {
 
   const handleSubmit = async (values: UserRegistrationData) => {
     dispatch(register({ ...values, avatar: avatar }));
-    // setTimeout(() => {
-    //   window.location.href = '/';
-    // }, 250);
+    setTimeout(() => {
+      navigate('/');
+    }, 250);
   };
 
   return (
@@ -93,7 +94,11 @@ export const RegistrationPageComponent = () => {
                       <img
                         src={URL.createObjectURL(avatar)}
                         alt='Avatar'
-                        style={{ width: '100%', height: '100%' }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
                       />
                     ) : (
                       <div

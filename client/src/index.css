@@ -15,13 +15,14 @@ code {
 /* navigation buttons */
 
 .nav-button-container {
-  width: 17.5em;
   display: flex;
+  gap: 2rem;
   justify-content: space-between;
   align-items: center;
 }
 
-button {
+button,
+.btn {
   background: none;
   padding: 0;
   color: inherit;
@@ -31,8 +32,13 @@ button {
   outline: inherit;
 }
 
+.logo {
+  color: inherit;
+}
+
 .logo:hover {
   cursor: pointer;
+  color: #F0A04B
 }
 
 .nav-button-active,

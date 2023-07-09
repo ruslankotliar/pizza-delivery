@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 
 import { Form, Input, Button, Checkbox, Modal, Typography, theme } from 'antd';
 
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { GoogleSquareFilled } from '@ant-design/icons';
 import { useGoogleLogin } from '@react-oauth/google';
 import { UserLoginData } from '../types';
 
-import { useDispatch } from 'react-redux';
 import { login, googleLogin } from '../features/auth/authActions';
-import { AppDispatch } from '../app/store';
+import { useAppDispatch } from '../app/hooks';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email address').required('Required'),
@@ -19,8 +18,8 @@ const LoginSchema = Yup.object().shape({
 
 export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   const { token } = theme.useToken();
-  const [remember, setRemember] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
+  const [remember, setRemember] = useState(false); // actually useless
+  const dispatch = useAppDispatch();
 
   const handleOk = () => {
     setIsModalOpen(false);
@@ -30,15 +29,13 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
     setIsModalOpen(false);
   };
 
-  const redirectToMain = (): void => {
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 250);
-  };
-
-  const handleSubmit = async (values: UserLoginData) => {
+  const handleSubmit = async (
+    values: UserLoginData,
+    { resetForm }: FormikHelpers<UserLoginData>
+  ) => {
     dispatch(login(values));
-    redirectToMain();
+    setIsModalOpen(false);
+    resetForm();
   };
 
   const formik = useFormik({
@@ -58,7 +55,7 @@ export const ModalLoginComponent = ({ isModalOpen, setIsModalOpen }: any) => {
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       dispatch(googleLogin({ token: tokenResponse.access_token }));
-      redirectToMain();
+      setIsModalOpen(false);
     },
     onError: (errorResponse) => console.error(errorResponse),
   });
